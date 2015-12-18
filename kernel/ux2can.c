@@ -40,7 +40,9 @@
 #include <linux/version.h>
 #include <linux/module.h>
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0)
 #include <asm/system.h>
+#endif
 #include <linux/uaccess.h>
 #include <linux/bitops.h>
 #include <linux/sched.h>
@@ -58,10 +60,11 @@
 #include <linux/delay.h>
 #include <linux/init.h>
 #include <linux/spinlock.h>
+#include <linux/init.h>
 
-#include <socketcan/can.h>
-#include <socketcan/can/core.h>
-#include <socketcan/can/dev.h>
+#include <linux/can.h>
+#include <linux/can/core.h>
+#include <linux/can/dev.h>
 
 #include <linux/platform_device.h>
 
@@ -485,7 +488,7 @@ error:
 	return retval;
 }
 
-static int __devexit ux2can_remove(struct platform_device *pdev)
+static int __exit ux2can_remove(struct platform_device *pdev)
 {
 	struct net_device *net = NULL;
 
@@ -500,7 +503,7 @@ static int __devexit ux2can_remove(struct platform_device *pdev)
 
 static struct platform_driver ux2can_driver = {
 	.probe = ux2can_probe,
-	.remove = __devexit_p(ux2can_remove),
+	.remove = ux2can_remove,
 	.driver = {
 		.name = DRIVER_NAME,
 		.owner = THIS_MODULE,
